@@ -8,17 +8,17 @@ const {
   deleteMovie,
 } = require('../controllers/movies-controller')
 
-//the use of checkLegalID will work only for calls wich send
+//HW2 - the use of checkLegalID will work only for calls wich send
 //an id so instead of moviesRouter.use(checkLegalID) we will add it to the specific calls
 const { checkLegalID } = require('../middleware/checkLegalID')
 const moviesRouter = express.Router()
 
-moviesRouter.use(checkLegalID)// // HW2 - add an import to you ROUTE LEVEL MIDDLEWARE
+
 moviesRouter.get('/', getMovies)
-moviesRouter.get('/:id',checkLegalID, getById)
+moviesRouter.get('/:id',checkLegalID, getById)// HW2 - add an import to you ROUTE LEVEL MIDDLEWARE
 moviesRouter.post('/', createMovie)
 moviesRouter.put('/', upsertMovie)
-moviesRouter.patch('/:id',checkLegalID, modifyMovie)
-moviesRouter.delete('/:id',checkLegalID, deleteMovie)
+moviesRouter.patch('/:id',checkLegalID, modifyMovie)// HW2 - add an import to you ROUTE LEVEL MIDDLEWARE
+moviesRouter.delete('/:id',checkLegalID, deleteMovie)// HW2 - add an import to you ROUTE LEVEL MIDDLEWARE
 
 module.exports = moviesRouter
