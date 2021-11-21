@@ -1,6 +1,9 @@
 const express = require('express')
 const serverLog = require('./serverLog')
 const moviesRouter = require('./routers/movies-router')
+const exampleMiddleware = require('./exampleMiddleware')// HW2 - add an import to you APPLICATION LEVEL MIDDLEWARE
+const { addDate } = require('./middleware/addDate')// HW2 - add an import to you APPLICATION LEVEL MIDDLEWARE
+const { addResponseHeader } = require('./middleware/addResponseHeader') // HW2 - add an import to you APPLICATION LEVEL MIDDLEWARE
 
 const app = express()
 const port = 8080
@@ -13,12 +16,14 @@ const myErrHandler = function (err, req, res, next) {
 }
 
 app.use(serverLog)
+app.use(exampleMiddleware, addDate, addResponseHeader)// HW2 - make the app use the APPLICATION LEVEL MIDDLEWARE that you created
 app.use(express.json())
 app.use(
   express.urlencoded({
     extended: true,
   })
 )
+
 app.use('/movies', moviesRouter)
 
 
