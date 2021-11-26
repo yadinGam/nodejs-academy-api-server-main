@@ -1,4 +1,5 @@
 const MoviesService = require('../services/movies-service')
+const InvalidMovieParamError = require('../errors/InvalidMovieParamError')
 
 function getMovies(request, response) {
   let { offset, limit } = request.query
@@ -30,50 +31,63 @@ function getById(request, response) {
   }
 }
 
-function createMovie(request, response) {
+function createMovie(request, response, next) {
   const { title, img, synopsis, rating, year } = request.body
 
+  const undefinedParams = {
+    ...!(title && { title }),
+    ...!(img && { img }),
+    ...!(synopsis && { synopsis }),
+    ...!(rating && { rating }),
+    ...!(year && { year }),
+  }
+debugger
   if (!title) {
-    return response.status(400).json({ error: 'title is a required body param' })
+    return  next(InvalidMovieParamError('title is a required body param'))
   }
 
   if (!synopsis) {
-    return response.status(400).json({ error: 'synopsis is a required body param' })
+    return next(InvalidMovieParamError('synopsis is a required body param' ))
   }
 
   if (!rating) {
-    return response.status(400).json({ error: 'rating is a required body param' })
+    return next(InvalidMovieParamError('rating is a required body param' ))
   }
 
   if (!year) {
-    return response.status(400).json({ error: 'year is a required body param' })
+    return next(InvalidMovieParamError('year is a required body param'))
   }
 
   const newMovie = MoviesService.createMovie({ title, img, synopsis, rating, year })
   return response.status(201).json(newMovie)
 }
 
-function upsertMovie(request, response) {
+function upsertMovie(request, response, next) {
+  debugger
   const { title, img, synopsis, rating, year } = request.body
 
-  if(!title) {
-    return response.status(400).json({ error: 'title is a required body param' })
+  if (!title) {
+    debugger
+    return  next(InvalidMovieParamError('title is a required body param'))
   }
 
-  if(!synopsis) {
-    return response.status(400).json({ error: 'synopsis is a required body param' })
+  if (!synopsis) {
+    debugger
+    return next(InvalidMovieParamError('synopsis is a required body param'))
   }
 
-  if(!rating) {
-    return response.status(400).json({ error: 'rating is a required body param' })
+  if (!rating) {
+    debugger
+    return next(InvalidMovieParamError('rating is a required body param'))
   }
 
-  if(!year) {
-    return response.status(400).json({ error: 'year is a required body param' })
+  if (!year) {
+    debugger
+    return next(InvalidMovieParamError('year is a required body param'))
   }
 
   const responsObject = MoviesService.upsertMovie({ title, img, synopsis, rating, year })
-
+debugger
   return response.status(responsObject.code).json(responsObject.movie)
 }
 
@@ -101,11 +115,10 @@ function deleteMovie(request, response) {
 
   const deletedMovie = MoviesService.deleteMovie(movieId)
 
-  if (!!deletedMovie) {
-    return response.status(200).json(deletedMovie)
-  } else {
+  if (!deletedMovie) {
     return response.status(404).json({ error: `movie with id ${deletedMovie} was not found` })
   }
+  return response.status(200).json(deletedMovie)
 }
 
 module.exports = { getMovies, getById, createMovie, upsertMovie, modifyMovie, deleteMovie }
