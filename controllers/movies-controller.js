@@ -1,5 +1,6 @@
 const MoviesService = require('../services/movies-service')
 const InvalidMovieParamError = require('../errors/InvalidMovieParamError')
+const { body, validationResult } = require('express-validator')
 
 function getMovies(request, response) {
   let { offset, limit } = request.query
@@ -121,4 +122,19 @@ function deleteMovie(request, response) {
   return response.status(200).json(deletedMovie)
 }
 
-module.exports = { getMovies, getById, createMovie, upsertMovie, modifyMovie, deleteMovie }
+function validate(method) {
+  console.log(`validating ${method} parameters`)
+  switch(method) {
+    case 'createMovie': {
+      return [
+        body('title', 'title doesn\'t exists').exists().isString().escape(),
+        body('img', 'img is not exists or not valid url').exists().isURL(),
+        body('synopsis', 'synopsis doesn\'t exists').exists().isString().escape(),
+        body('rating', 'rating doesn\'t exists or not numeric').exists().isNumeric(),
+        body('year', 'year doesn\'t exists or not numeric').exists().isNumeric(),
+      ]
+    }
+  }
+}
+
+module.exports = { getMovies, getById, createMovie, upsertMovie, modifyMovie, deleteMovie, validate }

@@ -15,7 +15,7 @@ const myErrHandler = function (err, req, res, next) {
   res.status(500).send('Something broke!')
 }
 
-app.use(serverLog, exampleMiddleware, addDate, addResponseHeader)// HW2 - make the app use the APPLICATION LEVEL MIDDLEWARE that you created
+app.use(exampleMiddleware, serverLog, addDate, addResponseHeader)// HW2 - make the app use the APPLICATION LEVEL MIDDLEWARE that you created
 app.use(express.json())
 app.use(
   express.urlencoded({
